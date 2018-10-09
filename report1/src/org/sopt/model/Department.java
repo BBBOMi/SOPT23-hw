@@ -1,35 +1,34 @@
 package org.sopt.model;
 
-public class Department {
-    private int id; // 학과 고유 번호
+public class Department extends University {
+    private int idx; // 학과 고유 번호
     private String name; // 학과 이름
     private String tel; // 학과 전화번호
-    private int type; // 학과 타입(공대, 자연대, 사범대, 치대..)
-    
-    public Department() {
+    private String type; // 학과 타입(공대, 자연대, 사범대, 치대..)
 
+    public Department() {
     }
 
-    public Department(int id, String name, String tel, int type) {
-        this.id = id;
+    public Department(final int idx, final String name, final String tel, final String type) {
+        this.idx = idx;
         this.name = name;
         this.tel = tel;
         this.type = type;
     }
 
-    public int getId() {
-        return id;
+    public int getIdx() {
+        return idx;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdx(final int idx) {
+        this.idx = idx;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -37,22 +36,22 @@ public class Department {
         return tel;
     }
 
-    public void setTel(String tel) {
+    public void setTel(final String tel) {
         this.tel = tel;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
     @Override
     public String toString() {
         return "Department{" +
-                "id=" + id +
+                "idx=" + idx +
                 ", name='" + name + '\'' +
                 ", tel='" + tel + '\'' +
                 ", type=" + type +

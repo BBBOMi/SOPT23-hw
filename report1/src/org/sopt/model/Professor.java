@@ -1,7 +1,7 @@
 package org.sopt.model;
 
-public class Professor {
-    private int id; // 교수 고유 번호
+public class Professor extends Department {
+    private int idx; // 교수 고유 번호
     private String name; // 교수 이름
     private String department; // 교수 학과
     private String tel; // 교수 전화번호
@@ -10,27 +10,27 @@ public class Professor {
     public Professor() {
     }
 
-    public Professor(int id, String name, String department, String tel, String subject) {
-        this.id = id;
+    public Professor(final int idx, final String name, final String department, final String tel, final String subject) {
+        this.idx = idx;
         this.name = name;
         this.department = department;
         this.tel = tel;
         this.subject = subject;
     }
 
-    public int getId() {
-        return id;
+    public int getIdx() {
+        return idx;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdx(final int idx) {
+        this.idx = idx;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -38,7 +38,7 @@ public class Professor {
         return department;
     }
 
-    public void setDepartment(String department) {
+    public void setDepartment(final String department) {
         this.department = department;
     }
 
@@ -46,7 +46,7 @@ public class Professor {
         return tel;
     }
 
-    public void setTel(String tel) {
+    public void setTel(final String tel) {
         this.tel = tel;
     }
 
@@ -54,14 +54,14 @@ public class Professor {
         return subject;
     }
 
-    public void setSubject(String subject) {
+    public void setSubject(final String subject) {
         this.subject = subject;
     }
 
     @Override
     public String toString() {
         return "Professor{" +
-                "id=" + id +
+                "idx=" + idx +
                 ", name='" + name + '\'' +
                 ", department='" + department + '\'' +
                 ", tel='" + tel + '\'' +

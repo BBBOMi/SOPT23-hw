@@ -1,7 +1,7 @@
 package org.sopt.model;
 
-public class Student {
-    private int id; // 학번
+public class Student extends Department {
+    private int idx; // 학번
     private String name; // 이름
     private int grade; // 학년
     private String department; // 학과
@@ -14,8 +14,8 @@ public class Student {
 
     }
 
-    public Student(int id, String name, int grade, String department, String email, String address, int age, String currentState) {
-        this.id = id;
+    public Student(final int idx, final String name, final int grade, final String department, final String email, final String address, final int age, final String currentState) {
+        this.idx = idx;
         this.name = name;
         this.grade = grade;
         this.department = department;
@@ -25,19 +25,19 @@ public class Student {
         this.currentState = currentState;
     }
 
-    public int getId() {
-        return id;
+    public int getIdx() {
+        return idx;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdx(final int idx) {
+        this.idx = idx;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -45,7 +45,7 @@ public class Student {
         return grade;
     }
 
-    public void setGrade(int grade) {
+    public void setGrade(final int grade) {
         this.grade = grade;
     }
 
@@ -53,7 +53,7 @@ public class Student {
         return department;
     }
 
-    public void setDepartment(String department) {
+    public void setDepartment(final String department) {
         this.department = department;
     }
 
@@ -61,7 +61,7 @@ public class Student {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
 
@@ -69,7 +69,7 @@ public class Student {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(final String address) {
         this.address = address;
     }
 
@@ -77,7 +77,7 @@ public class Student {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(final int age) {
         this.age = age;
     }
 
@@ -85,14 +85,14 @@ public class Student {
         return currentState;
     }
 
-    public void setCurrentState(String currentState) {
+    public void setCurrentState(final String currentState) {
         this.currentState = currentState;
     }
 
     @Override
     public String toString() {
         return "Student{" +
-                "id=" + id +
+                "idx=" + idx +
                 ", name='" + name + '\'' +
                 ", grade=" + grade +
                 ", department='" + department + '\'' +
