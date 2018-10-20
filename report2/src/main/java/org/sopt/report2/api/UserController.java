@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,15 +39,52 @@ public class UserController {
     public String getUsers(@RequestParam(value = "name", defaultValue = "") String name, @RequestParam(value = "part", defaultValue = "") String part) {
         if(!("".equals(name))) {
             Iterator<User> it = userList.iterator();
+            List<User> list = new ArrayList<>();
             while(it.hasNext()) {
                 User user = it.next();
                 if(name.equals(user.getName())) {
-                    return user.toString();
+                    list.add(user);
                 }
             }
-            return "같은 이름의 회원이 없습니다";
+            if(list.size() > 0) {
+                return list.toString();
+            } else {
+                return "같은 이름의 회원이 없습니다";
+            }
+        } else if(!("".equals(part))) {
+            Iterator<User> it = userList.iterator();
+            List<User> list = new ArrayList<>();
+            while(it.hasNext()) {
+                User user = it.next();
+                if(part.equals(user.getPart())) {
+                    list.add(user);
+                }
+            }
+            if(list.size() > 0) {
+                return list.toString();
+            } else {
+                return "같은 파트의 회원이 없습니다";
+            }
         }
-        //return ;
+        return userList.toString();
+    }
+
+    /**
+     * 현재 리스트에서 회원 id값으로 회원 검색
+     * @param userIdx
+     *          검색할 회원 id값
+     * @return  회원 존재 유무에 따라 회원 데이터 혹은 안내문 반환
+     */
+    @GetMapping("users/{user_idx}")
+    public String getUserByIdx(@PathVariable(name="user_idx") int userIdx) {
+        Iterator<User> it = userList.iterator();
+        while(it.hasNext()) {
+            User user = it.next();
+            if(userIdx == user.getUser_idx()) {
+                return user.toString();
+            }
+        }
+        return "해당 id의 회원이 없습니다";
     }
 
     /**
@@ -58,5 +96,10 @@ public class UserController {
     public String addUser(@RequestBody final User user) {
         userList.add(user);
         return "저장 완료!";
+    }
+
+    @PutMapping("users/{user_idx}")
+    public String updateUser(@PathVariable(name="user_idx")int userIdx) {
+        return "수정 완료!";
     }
 }
