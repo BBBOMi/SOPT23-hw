@@ -98,8 +98,41 @@ public class UserController {
         return "저장 완료!";
     }
 
+    /**
+     * 회원 정보 수정
+     * @param userIdx
+     *          회원 아이디
+     * @return 회원 존재 유무에 따라 수정 혹은 안내문 반환
+     */
     @PutMapping("users/{user_idx}")
     public String updateUser(@PathVariable(name="user_idx")int userIdx) {
-        return "수정 완료!";
+        Iterator<User> it = userList.iterator();
+        while(it.hasNext()) {
+            User user = it.next();
+            if(userIdx == user.getUser_idx()) {
+                // 회원 정보 수정
+                return "수정 완료!";
+            }
+        }
+        return "해당 id의 회원이 없습니다";
+    }
+
+    /**
+     * 회원 삭제
+     * @param userIdx
+     *          회원 아이디
+     * @return 회원 존재 유무에 따라 삭제 혹은 안내문 반환
+     */
+    @DeleteMapping("users/{user_idx}")
+    public String deleteUser(@PathVariable(name="user_idx")int userIdx) {
+        Iterator<User> it = userList.iterator();
+        while(it.hasNext()) {
+            User user = it.next();
+            if(userIdx == user.getUser_idx()) {
+                userList.remove(user);
+                return "회원이 삭제 되었습니다";
+            }
+        }
+        return "해당 id의 회원이 없습니다";
     }
 }
