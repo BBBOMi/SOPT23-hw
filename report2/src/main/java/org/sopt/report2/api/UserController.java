@@ -1,6 +1,7 @@
 package org.sopt.report2.api;
 
 import org.sopt.report2.model.User;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -36,8 +37,8 @@ public class UserController {
      * @return 회원 존재 유무에 따라 회원 데이터 혹은 안내문 반환
      */
     @GetMapping("users")
-    public String getUsers(@RequestParam(value = "name", defaultValue = "") String name, @RequestParam(value = "part", defaultValue = "") String part) {
-        if(!("".equals(name))) {
+    public String getUsers(@RequestParam(value = "name", required = false)String name, @RequestParam(value = "part", required = false)String part) {
+        if(!StringUtils.isEmpty(name)) {
             Iterator<User> it = userList.iterator();
             List<User> list = new ArrayList<>();
             while(it.hasNext()) {
@@ -51,7 +52,7 @@ public class UserController {
             } else {
                 return "같은 이름의 회원이 없습니다";
             }
-        } else if(!("".equals(part))) {
+        } else if(!StringUtils.isEmpty(part)) {
             Iterator<User> it = userList.iterator();
             List<User> list = new ArrayList<>();
             while(it.hasNext()) {
@@ -76,7 +77,7 @@ public class UserController {
      * @return  회원 존재 유무에 따라 회원 데이터 혹은 안내문 반환
      */
     @GetMapping("users/{user_idx}")
-    public String getUserByIdx(@PathVariable(name="user_idx") int userIdx) {
+    public String getUserByIdx(@PathVariable(name="user_idx")int userIdx) {
         Iterator<User> it = userList.iterator();
         while(it.hasNext()) {
             User user = it.next();
@@ -111,6 +112,7 @@ public class UserController {
             User user = it.next();
             if(userIdx == user.getUser_idx()) {
                 // 회원 정보 수정
+                userList.set(userList.indexOf(user), new User());
                 return "수정 완료!";
             }
         }
