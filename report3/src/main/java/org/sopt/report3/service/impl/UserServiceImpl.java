@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
             User user = it.next();
             if(userIdx == user.getUser_idx()) {
                 // 회원 정보 수정
-                userList.set(userList.indexOf(user), new User());
+                userList.set(userList.indexOf(user), new User(userIdx));
                 return DefaultRes.res(HttpStatus.OK.value(), "회원 정보 수정 성공!");
             }
         }
