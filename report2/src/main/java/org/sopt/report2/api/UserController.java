@@ -112,7 +112,7 @@ public class UserController {
             User user = it.next();
             if(userIdx == user.getUser_idx()) {
                 // 회원 정보 수정
-                userList.set(userList.indexOf(user), new User());
+                userList.set(userList.indexOf(user), new User(userIdx));
                 return "수정 완료!";
             }
         }

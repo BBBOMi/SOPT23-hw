@@ -8,6 +8,10 @@ public class User {
     public User() {
     }
 
+    public User(int user_idx) {
+        this.user_idx = user_idx;
+    }
+
     public int getUser_idx() {
         return user_idx;
     }
