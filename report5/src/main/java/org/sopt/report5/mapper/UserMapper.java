@@ -27,8 +27,8 @@ public interface UserMapper {
     @Insert("INSERT INTO user_rp(idx, name, part, profileUrl) VALUES(#{signUpReq.name}, #{signUpReq.part}, #{signUpReq.profileUrl})")
     void save(@Param("signUpReq")final SignUpReq signUpReq);
 
-    @Update("UPDATE user_rp SET name = #{user.name}, part = #{user.part}, profileUrl = #{user.profileUrl} WHERE idx = #{idx}")
-    void update(@Param("user")final User user, @Param("idx")final int idx);
+    @Update("UPDATE user_rp SET name = #{signUpReq.name}, part = #{signUpReq.part}, profileUrl = #{signUpReq.profileUrl} WHERE idx = #{idx}")
+    void update(@Param("idx")final int idx, @Param("signUpReq")final SignUpReq signUpReq);
 
     @Delete("DELETE FROM user_rp WHERE idx = #{idx}")
     void delete(@Param("idx")final int idx);

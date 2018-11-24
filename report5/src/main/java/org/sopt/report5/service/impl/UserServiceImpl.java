@@ -9,17 +9,13 @@ import org.sopt.report5.service.S3FileUploadService;
 import org.sopt.report5.service.UserService;
 import org.sopt.report5.utils.ResponseMessage;
 import org.sopt.report5.utils.StatusCode;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -45,7 +41,7 @@ public class UserServiceImpl implements UserService {
     public DefaultRes getCurrentTime() {
         LocalDateTime currentDateTime = LocalDateTime.now();
         String current = currentDateTime.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
-        return DefaultRes.res(HttpStatus.OK.value(), "현재 시간", current);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.TIME_SUCCESS, current);
     }
 
     /**
@@ -59,7 +55,7 @@ public class UserServiceImpl implements UserService {
      * @return 회원 존재 유무에 따라 회원 데이터 혹은 안내문 반환
      */
     @Override
-    public DefaultRes getUsers(String name, String part) {
+    public DefaultRes getUsers(final String name, final String part) {
         List<User> list;
         if(!StringUtils.isEmpty(name)) {
             list = userMapper.findUserByName(name);
@@ -83,7 +79,7 @@ public class UserServiceImpl implements UserService {
      * @return  회원 존재 유무에 따라 회원 데이터 혹은 안내문 반환
      */
     @Override
-    public DefaultRes getUserByIdx(int userIdx) {
+    public DefaultRes getUserByIdx(final int userIdx) {
        User user = userMapper.findByUserIdx(userIdx);
        if(user != null) {
            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, user);
@@ -100,13 +96,13 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional
-    public DefaultRes addUser(SignUpReq signUpReq) {
+    public DefaultRes addUser(final SignUpReq signUpReq) {
         try {
             if(signUpReq.getProfile() != null) {
                 signUpReq.setProfileUrl(s3FileUploadService.upload(signUpReq.getProfile()));
             }
             userMapper.save(signUpReq);
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.CREATED_USER);
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.CREATED_USER);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error(e.getMessage());
@@ -121,35 +117,55 @@ public class UserServiceImpl implements UserService {
      * @return 회원 존재 유무에 따라 수정 혹은 안내문 반환
      */
     @Override
-    public DefaultRes updateUser(int userIdx) {
-        Iterator<User> it = userList.iterator();
-        while(it.hasNext()) {
-            User user = it.next();
-            if(userIdx == user.getUser_idx()) {
-                // 회원 정보 수정
-                userList.set(userList.indexOf(user), new User(userIdx));
-                return DefaultRes.res(HttpStatus.OK.value(), "회원 정보 수정 성공!");
+    @Transactional
+    public DefaultRes updateUser(int userIdx, final SignUpReq signUpReq) {
+        final User user = userMapper.findByUserIdx(userIdx);
+        if(user == null) {
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        } else {
+            try {
+                if(signUpReq.getProfile() != null) {
+                    // 확인 해보기
+                    user.setProfileUrl(s3FileUploadService.upload(signUpReq.getProfile()));
+                }
+                if(signUpReq.getName() != null) {
+                    user.setName(signUpReq.getName());
+                }
+                if(signUpReq.getPart() != null) {
+                    user.setPart(signUpReq.getPart());
+                }
+
+                userMapper.update(userIdx, signUpReq);
+                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.UPDATE_USER);
+            } catch (Exception e) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                log.error(e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
         }
-        return DefaultRes.res(HttpStatus.NOT_FOUND.value(), "일치하는 ID의 회원이 없습니다.");
     }
 
     /**
      * 회원 삭제
      * @param userIdx
      *          회원 아이디
-     * @return 회원 존재 유무에 따라 삭제 혹은 안내문 반환
+     * @return DefaultRes 객체
      */
     @Override
-    public DefaultRes deleteUser(int userIdx) {
-        Iterator<User> it = userList.iterator();
-        while(it.hasNext()) {
-            User user = it.next();
-            if(userIdx == user.getUser_idx()) {
-                userList.remove(user);
-                return DefaultRes.res(HttpStatus.OK.value(), "회원 삭제 성공!");
+    @Transactional
+    public DefaultRes deleteUser(final int userIdx) {
+        final User user = userMapper.findByUserIdx(userIdx);
+        if(user == null) {
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        } else {
+            try {
+                userMapper.delete(userIdx);
+                return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.DELETE_USER);
+            } catch (Exception e) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                log.error(e.getMessage());
+                return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
             }
         }
-        return DefaultRes.res(HttpStatus.NOT_FOUND.value(), "일치하는 ID의 회원이 없습니다.");
     }
 }
