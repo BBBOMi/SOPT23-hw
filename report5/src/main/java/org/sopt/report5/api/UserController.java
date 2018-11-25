@@ -1,19 +1,25 @@
 package org.sopt.report5.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.sopt.report5.model.DefaultRes;
-import org.sopt.report5.dto.User;
+import org.sopt.report5.model.SignUpReq;
 import org.sopt.report5.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import static org.sopt.report5.model.DefaultRes.FAIL_DEFAULT_RES;
+
+@Slf4j
 @RestController
 public class UserController {
     private final UserService userService;
 
     /**
      * 생성자가 1개일 경우 @Autowired 생략 가능
-     * @param userService user 서비스
+     * @param userService
+     *      user 서비스
      */
     public UserController(final UserService userService) {
         this.userService = userService;
@@ -40,7 +46,7 @@ public class UserController {
      * @return 회원 존재 유무에 따라 회원 데이터 혹은 안내문 반환
      */
     @GetMapping("users")
-    public ResponseEntity getUsers(@RequestParam(value = "name", required = false)String name, @RequestParam(value = "part", required = false)String part) {
+    public ResponseEntity getUsers(@RequestParam(value = "name", required = false)final String name, @RequestParam(value = "part", required = false)final String part) {
         DefaultRes defaultRes = userService.getUsers(name, part);
         return new ResponseEntity<>(defaultRes, HttpStatus.OK);
     }
@@ -51,33 +57,57 @@ public class UserController {
      *          검색할 회원 id값
      * @return  회원 존재 유무에 따라 회원 데이터 혹은 안내문 반환
      */
-    @GetMapping("users/{user_idx}")
-    public ResponseEntity getUserByIdx(@PathVariable(name="user_idx")int userIdx) {
-        DefaultRes defaultRes =  userService.getUserByIdx(userIdx);
-        return new ResponseEntity(defaultRes, HttpStatus.OK);
+    @GetMapping("users/{userIdx}")
+    public ResponseEntity getUserByIdx(@PathVariable(name="userIdx")int userIdx) {
+        try {
+            DefaultRes defaultRes = userService.getUserByIdx(userIdx);
+            return new ResponseEntity(defaultRes, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
      * 회원 저장
-     * @param user 저장할 회원 객체
+     * @param signUpReq
+     *      저장할 회원 객체
      * @return 저장 완료 메세지
      */
     @PostMapping("users")
-    public ResponseEntity addUser(@RequestBody final User user) {
-        DefaultRes defaultRes = userService.addUser(user);
-        return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+    public ResponseEntity addUser(final SignUpReq signUpReq, @RequestPart(value = "profile", required = false) final MultipartFile file) {
+        try {
+            if (file != null) {
+                signUpReq.setProfile(file);
+            }
+            DefaultRes defaultRes = userService.addUser(signUpReq);
+            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
      * 회원 정보 수정
      * @param userIdx
-     *          회원 아이디
-     * @return 회원 존재 유무에 따라 수정 혹은 안내문 반환
+     *      수정할 회원 고유 idx
+     * @param signUpReq
+     *      수정할 정보를 가진 객체
+     * @return ResponseEntity
      */
     @PutMapping("users/{user_idx}")
-    public ResponseEntity updateUser(@PathVariable(name="user_idx")int userIdx) {
-        DefaultRes defaultRes =  userService.updateUser(userIdx);
-        return new ResponseEntity(defaultRes, HttpStatus.OK);
+    public ResponseEntity updateUser(@PathVariable(name="user_idx")int userIdx, final SignUpReq signUpReq, @RequestPart(value = "profile", required = false)final MultipartFile file) {
+        try {
+            if (file != null) {
+                signUpReq.setProfile(file);
+            }
+            DefaultRes defaultRes = userService.updateUser(userIdx, signUpReq);
+            return new ResponseEntity(defaultRes, HttpStatus.OK);
+      } catch (Exception e) {
+           log.error(e.getMessage());
+           return new ResponseEntity(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+       }
     }
 
     /**
@@ -88,7 +118,12 @@ public class UserController {
      */
     @DeleteMapping("users/{user_idx}")
     public ResponseEntity deleteUser(@PathVariable(name="user_idx")int userIdx) {
-        DefaultRes defaultRes =  userService.deleteUser(userIdx);
-        return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+        try {
+            DefaultRes defaultRes = userService.deleteUser(userIdx);
+            return new ResponseEntity<>(defaultRes, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

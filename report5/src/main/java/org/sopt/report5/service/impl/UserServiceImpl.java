@@ -101,6 +101,7 @@ public class UserServiceImpl implements UserService {
             if(signUpReq.getProfile() != null) {
                 signUpReq.setProfileUrl(s3FileUploadService.upload(signUpReq.getProfile()));
             }
+
             userMapper.save(signUpReq);
             return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.CREATED_USER);
         } catch (Exception e) {
@@ -113,8 +114,10 @@ public class UserServiceImpl implements UserService {
     /**
      * 회원 정보 수정
      * @param userIdx
-     *          회원 아이디
-     * @return 회원 존재 유무에 따라 수정 혹은 안내문 반환
+     *      회원 고유 idx
+     * @param signUpReq
+     *      수정할 정보를 담고 있는 객체
+     * @return DefaultRes
      */
     @Override
     @Transactional
@@ -125,7 +128,6 @@ public class UserServiceImpl implements UserService {
         } else {
             try {
                 if(signUpReq.getProfile() != null) {
-                    // 확인 해보기
                     user.setProfileUrl(s3FileUploadService.upload(signUpReq.getProfile()));
                 }
                 if(signUpReq.getName() != null) {
@@ -135,7 +137,7 @@ public class UserServiceImpl implements UserService {
                     user.setPart(signUpReq.getPart());
                 }
 
-                userMapper.update(userIdx, signUpReq);
+                userMapper.update(userIdx, user);
                 return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.UPDATE_USER);
             } catch (Exception e) {
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

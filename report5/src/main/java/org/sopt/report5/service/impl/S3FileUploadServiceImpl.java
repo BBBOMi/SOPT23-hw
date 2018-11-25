@@ -24,7 +24,7 @@ import java.util.UUID;
 public class S3FileUploadServiceImpl implements S3FileUploadService {
 
     // 버킷 이름 동적 할당
-    @Value("sopt-hw")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     // 버킷 주소 동적 할당

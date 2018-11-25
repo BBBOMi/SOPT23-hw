@@ -15,7 +15,7 @@ public interface UserMapper {
     @Select("SELECT * FROM user_rp")
     List<User> findAll();
 
-    @Select("SELECT * FROM user_rp WHERE idx = #{idx}")
+    @Select("SELECT * FROM user_rp WHERE user_idx = #{idx}")
     User findByUserIdx(@Param("idx")final int idx);
 
     @Select("SELECT * FROM user_rp WHERE name = #{name}")
@@ -24,12 +24,12 @@ public interface UserMapper {
     @Select("SELECT * FROM user_rp WHERE part = #{part}")
     List<User> findUserByPart(@Param("part")final String part);
 
-    @Insert("INSERT INTO user_rp(idx, name, part, profileUrl) VALUES(#{signUpReq.name}, #{signUpReq.part}, #{signUpReq.profileUrl})")
+    @Insert("INSERT INTO user_rp(name, part, profile_url) VALUES(#{signUpReq.name}, #{signUpReq.part}, #{signUpReq.profileUrl})")
     void save(@Param("signUpReq")final SignUpReq signUpReq);
 
-    @Update("UPDATE user_rp SET name = #{signUpReq.name}, part = #{signUpReq.part}, profileUrl = #{signUpReq.profileUrl} WHERE idx = #{idx}")
-    void update(@Param("idx")final int idx, @Param("signUpReq")final SignUpReq signUpReq);
+    @Update("UPDATE user_rp SET name = #{user.name}, part = #{user.part}, profileUrl = #{user.profileUrl} WHERE user_idx = #{idx}")
+    void update(@Param("idx")final int idx, @Param("user")final User user);
 
-    @Delete("DELETE FROM user_rp WHERE idx = #{idx}")
+    @Delete("DELETE FROM user_rp WHERE user_idx = #{idx}")
     void delete(@Param("idx")final int idx);
 }

@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.sopt.report5.utils.ResponseMessage;
+import org.sopt.report5.utils.StatusCode;
 
 /**
  * Created by bomi on 2018-11-01.
@@ -25,8 +26,8 @@ public class DefaultRes<T> {
     // Response TestData
     private T responseData;
 
-    public DefaultRes(final HttpStatus statusCode, final String responseMessage) {
-        this.statusCode = statusCode.value();
+    public DefaultRes(final int statusCode, final String responseMessage) {
+        this.statusCode = statusCode;
         this.responseMessage = responseMessage;
         this.responseData = null;
     }
@@ -43,6 +44,6 @@ public class DefaultRes<T> {
                 .build();
     }
 
-//    public static final DefaultRes FAIL_DEFAULT_RES
-//            = new DefaultRes(StatusCode.)
+    public static final DefaultRes FAIL_DEFAULT_RES
+            = new DefaultRes(StatusCode.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
 }
